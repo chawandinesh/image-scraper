@@ -15,6 +15,11 @@ app.use(cors())
 
 fs.createWriteStream("src/ImagesLink.txt", "UTF-8");
 
+
+app.get('/', (req,res) => {
+    res.send("Api is working")
+})
+
 app.post('/api/data', (req,res) => {
     let WriteStream  = fs.createWriteStream("src/ImagesLink.txt", "UTF-8");
     request(req.body.data, (err, resp, html)=>{
@@ -28,7 +33,13 @@ app.post('/api/data', (req,res) => {
             $("img").each((index, image)=>{
     
                 var img = $(image).attr('src');
-                var Links = img;
+                let Links;
+                if(img.slice(img.length - 4,img.length) === '.gif'){
+                     Links = ""
+                }else{
+                    Links = img
+                }
+                // var Links = img;
                 WriteStream.write(Links);
                 WriteStream.write("\n");
             });
