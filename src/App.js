@@ -1,32 +1,61 @@
-import React,{useState} from 'react';
-import logo from './logo.svg';
-import axios from 'axios'
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import Container from "@material-ui/core/Container";
+import InputBar from "./components/InputBar";
+import ImagesList from "./components/ImagesList";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import failedLogo from "./assets/images/errorred.png";
 
 function App() {
-  const [text, setText] = useState('')
-  const [imageData, setImageData] = useState([])
-  const handleSubmit = async() => {
-    await axios.post(`http://localhost:3006/api/data?url=${text}`, text).then((res) => {
-      // console.log(res.data)
-      setImageData(res.data)
-    }).catch(err => {
-      console.log(err)
-    })
-  }
+  const [imageData, setImageData] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState({
+    boolean: false,
+    status: "",
+  });
+  const getImagesList = (images) => {
+    setImageData(images);
+  };
+  const getLoadingStatus = (boolean, status) => {
+    setLoadingStatus({ ...loadingStatus, boolean: boolean, status: status });
+  };
   return (
-    <div className="App">
-      {/* <InputBar/>
-      <ImagesList/> */}
-      <input type = "text" onChange={(e) => setText(e.target.value)}/>
-      <button onClick={handleSubmit}>Submit</button>
-
-      <div style={{margin: "10px"}}>
-        {imageData.length && imageData.map((e,idx) => (
-          <img src={e} key={idx} alt="no_image_available" style={{padding: "5px"}} height="200px" width="200px"/>
-        ))}
-      </div>
-    </div>
+    <Container
+      maxWidth="lg"
+      style={{ background: "#eef", minHeight: "100vh", height: "auto" }}
+    >
+      <InputBar getImagesList={getImagesList} loading={getLoadingStatus} />
+      {loadingStatus.boolean === true ? (
+        <div
+          style={{
+            display: "flex",
+            marginTop: "100px",
+            justifyContent: "center",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+          <h2 style={{ marginLeft: "5px" }}>Loading...</h2>
+        </div>
+      ) : loadingStatus.status === "success" ? (
+        <ImagesList imageData={imageData} />
+      ) : loadingStatus.status === "failed" ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "100px",
+            flexDirection: "column-reverse",
+          }}
+        >
+          <h2>Failed</h2>
+          <img src={failedLogo} height="100px" alt="failed_logo" />
+        </div>
+      ) : (
+        <div />
+      )}
+    </Container>
   );
 }
 
