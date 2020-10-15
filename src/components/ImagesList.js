@@ -4,7 +4,7 @@ function ImagesList(props) {
   return (
     <div style={{ margin: "10px" }}>
       {props.imageData.length ?
-        props.imageData.map((e, idx) => (
+        props.imageData.filter(image => image !== null).map((e, idx) => (
           <img
             src={e}
             key={idx}

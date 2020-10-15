@@ -7,6 +7,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 app.use(bodyParser());
 app.use(cors());
+
+var data = []
+app.get("/", (req,res) => {
+  res.status(200).json({
+    status: "Api is working",
+    data: data
+  })
+})
 app.post("/api/data",  async(req, res) => {
   const { url } = req.query;
   if (!url) {
@@ -25,6 +33,7 @@ app.post("/api/data",  async(req, res) => {
       }
       arrayData.push(Links);
     });
+    data = arrayData
     res.status(200).send(arrayData);
   } catch (error) {
     res.status(500).send(error);
